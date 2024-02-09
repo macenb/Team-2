@@ -17,26 +17,46 @@ Once you're in the database:
 ```mysql
 CREATE USER 'blueteam'@'%' IDENTIFIED BY '<password>';
 # % is a wildcard char, your password must meet requirements
-# backdoor user should be localhost
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT on <database>.<table> TO '<username>'@'%';
+# backdoor user should be localhost. Usually you won't have a user outside of localhost and %
+
+### These are the permissions your database user (non-root) should have. These are the basics for updating and editing and viewing a normal table
+GRANT CREATE, INSERT, UPDATE, DELETE, SELECT on <database>.<table> TO '<username>'@'<hostname>';
+# you can add all privileges with:
+GRANT ALL PRIVILEGES ON *.* to '<username>'@'hostname';
+
+### This reboots your permissions, updating the real permissions with your newly edited GRANT tables
 FLUSH PRIVILEGES;
 ```
 
 Users:
+There are a set of system users that should exist on a normal installation of MySQL. Outside of the `custom` user below, which is a placeholder for any users you would add on your own, all the users are the typical default MySQL users.
 ```
-+-------------+--------+
-| User        | Host   |
-+-------------+--------+
-| custom      | %      |
-
++------------------+-----------+
+| User             | Host      |
++------------------+-----------+
+| custom           | %         |
+| debian-sys-maint | localhost |
+| mysql.infoschema | localhost |
+| mysql.session    | localhost |
+| mysql.sys        | localhost |
+| root             | localhost |
++------------------+-----------+
 ```
 
+To audit users and edit permissions for a user, you can use these commands:
 ```mysql
+### Show all users
+SELECT User, Host FROM mysql.user;
+### Show current user
+SELECT current_user();
+### Show all active users
+SELECT user, host, command FROM information_schema.processlist;
 
-SHOW GRANTS FOR 'username'@'%';
+### Check permissions for a user
+SHOW GRANTS FOR 'username'@'<hostname>';
 
 #### Revoking permissions
-REVOKE DROP ON <database>.<table> FROM '<username>'@'%';
+REVOKE DROP ON <database>.<table> FROM '<username>'@'<hostname>';
 
 #### Altering
 ALTER USER '<username>'@'<hostname>' IDENTIFIED WITH mysql_native_password BY '<password>'
