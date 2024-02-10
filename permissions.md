@@ -1,6 +1,12 @@
 Permissions in [[Linux]] are kind fun, here are some notes
 
-`chown`:
+`chown` and `chmod`:
+```sh
+chown -R floyd:Sales /SalesInfo
+# change ownership to user floyd group Sales for /SalesInfo
+chmod -R u=rwx,g=rx,o-rwx /SalesInfo
+# change access rights for user, group, and others for folder SalesInfo
+```
 
 `chattr`:
 ```
@@ -14,3 +20,9 @@ Permissions numbers:
 - 1 = Execute
 - 2 = Write
 - 4 = read
+
+Groups and users:
+```sh
+adduser <username>
+groupadd <groupname>
+```
