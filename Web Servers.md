@@ -22,6 +22,34 @@ In each of the `-available` folders, it contains a set of config files that the 
 Permissions:
 File permissions should be `644` at least, so the website can read them
 
+# NGINX
+Config files in `/etc/nginx`
+nginx runs really similar to Apache2, but with a couple differences. The structure is the same as in Apache2, there are `sites-available` and `sites-enabled` sections that have config for the individual sites. 
+```sh
+server {
+       listen 80;
+#       listen 443 ssl;
+       listen [::]:80;
+
+       server_name example.com;
+
+       root /var/www/example.com;
+       index index.html;
+
+       location / {
+               try_files $uri $uri/ =404;
+       }
+}
+```
+First line is ipv4, adding `default_server` will set it as a default. Commented is for ssl config
+Second line is ipv6, adding `default_server`
+Root folder, then index files, in order left to right for what it looks for.
+Location will, as you add files to the url, try_files first by filename, then by folder name, then throw error 404
+
+Um `fastcgi.conf` probably contains like variables and the like for dynamically generated website content like Python or PHP
+`koi-` is charsets. You should have `win` and `utf` by default
+`mime.types` contains a content-type reference for nginx
+
 ### PHP
 I'm not sure, but I'm almost positive that the website uses PHP, which means you should probably harden up the PHP code and config files. Here's some more information.
 All of this info minus my witty banter can be found at the [OWASP Site](https://cheatsheetseries.owasp.org/cheatsheets/PHP_Configuration_Cheat_Sheet.html)
