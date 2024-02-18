@@ -76,6 +76,124 @@ sudo systemctl restart named
 
 This will set up your 'Name Server', which you then need to point to in network configurations of other machines.
 
+You also need to add in this at the top of `named.conf.options`:
+```sh
+acl trusted {
+	192.168.2.0/24;
+	172.16.0.0/16;
+}
+```
+This is an access control list for 
+
 ### DNS Troubleshooting
 `nslookup www.websitename.org`
 `nslookup 192.168.8.2`
+`journalctl -xe`
+
+## Working config files
+Here is what we were able to get working in the services practice:
+#### named.conf.local
+```sh
+zone "team2.cyberjousting.org" IN {
+    type master;
+    file "/etc/bind/zones/cyberjousting";
+    allow-query { any; };
+};
+
+zone "team2.net" IN {
+    type master;
+    file "/etc/bind/zones/team2";
+    allow-query { any; };
+};
+
+zone "16.172.in-addr.arpa" IN {
+	type master;
+	file "/etc/bind/zones/extreverse";
+	allow-query { any; };
+};
+
+zone "2.168.192.in-addr.arpa" IN {
+	type master;
+	file "/etc/bind/zones/intreverse";
+	allow-query { any; };
+};
+```
+
+#### named.conf.options
+```sh
+acl trusted {
+	192.168.2.0/24;
+	172.16.0.0/16;
+};
+options {
+	; normal config that is here is great, but these ones look important
+	recursion yes;
+	allow-query { localhost; trusted; };
+	listen-on { 192.168.2.2; 172.16.4.2; };
+	forwarders {
+		192.168.2.1;
+	}
+}
+```
+
+#### Forward External:
+```sh
+$TTL   86400
+@      IN      SOA     ns1.cyberjousting.org. root.cyberjousting.org. (
+                        2       ; Serial
+                   604800       ; Refresh
+                    86400       ; Retry
+                  2419200       ; Expire
+                    86400 )     ; Negative Cache TTL
+@      IN      NS       ns1.cyberjousting.org.
+ns1    IN      A        172.16.4.2
+www    IN      A        172.16.4.2
+shell  IN      A        172.16.5.2
+files  IN      A        172.16.5.2
+```
+
+#### Reverse External:
+```sh
+$TTL   86400
+@      IN      SOA     ns1.cyberjousting.org. admin.cyberjousting.org. (
+                        2       ; Serial
+                   604800       ; Refresh
+                    86400       ; Retry
+                  2419200       ; Expire
+                    86400 )     ; Negative Cache TTL
+@      IN      NS       ns1.team2.cyberjousting.org.
+2.4    IN      PTR      ns1.team2.cyberjousting.org.
+2.4    IN      PTR      www.team2.cyberjousting.org.
+2.5    IN      PTR      shell.team2.cyberjousting.org.
+2.5    IN      PTR      files.team2.cyberjousting.org.
+```
+
+#### Forward Internal:
+```sh
+$TTL   86400
+@      IN      SOA     ns1.team2.net. root.team2.net. (
+                        2       ; Serial
+                   604800       ; Refresh
+                    86400       ; Retry
+                  2419200       ; Expire
+                    86400 )     ; Negative Cache TTL
+@      IN      NS       ns1.team2.net.
+ns1    IN      A        192.168.2.2
+www    IN      A        192.168.2.3
+db     IN      A        192.168.2.4
+```
+
+#### Reverse Internal:
+```sh
+$TTL   86400
+@      IN      SOA     ns1.team2.net. root.team2.net. (
+                        2       ; Serial
+                   604800       ; Refresh
+                    86400       ; Retry
+                  2419200       ; Expire
+                    86400 )     ; Negative Cache TTL
+@      IN      NS       ns1.team2.net.
+2      IN      A        ns1.team2.net.
+3      IN      A        www.team2.net.
+4      IN      A        db.team2.net.
+```
