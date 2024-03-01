@@ -23,3 +23,7 @@ Good rules:
 sudo ufw allow OpenSSH
 sudo ufw allow 22/tcp
 ```
+
+### Service specific information
+- DNS: you pretty much just need port 53udp up, and maybe not even outgoing. Just block everything else
+- Database: idk if anything is necessary for scoring besides this, but db service runs on port 5432tcp by default, double check your configs, then you should be able to lock up everything but that

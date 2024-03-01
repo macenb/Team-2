@@ -23,6 +23,10 @@ Permissions numbers:
 
 Groups and users:
 ```sh
-adduser <username>
+adduser -m <username>
+userdel -r <username>
 groupadd <groupname>
+groupdel <groupname>
+
+usermod -aG <groupname> <username> # you can chain group names by commas
 ```

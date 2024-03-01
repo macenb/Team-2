@@ -21,3 +21,6 @@ Back up everything you can
 	If a user has `username:*:...`, they have no login
 	If a user has `username::...`, they have no password
 If you see a malicious user 
+
+Pins: `/etc/apt/apt.conf` `/etc/apt/sources.list` `/etc/apt/preferences` `/etc/apt/preferences.d/`
+Also you should turn on logging, which is usually `rsyslog` or `rsyslogd`
