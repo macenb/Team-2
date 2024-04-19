@@ -1,3 +1,19 @@
+-- set up user roles and passwords
+ALTER USER postgres WITH NOSUPERUSER;
+ALTER ROLE postgres WITH PASSWORD 'S3cr3tDBP@ss!';
+REVOKE ALL ON DATABASE db FROM postgres;
+GRANT CONNECT ON DATABASE db TO postgres;
+REVOKE ALL ON purchases FROM postgres;
+GRANT SELECT ON purchases TO postgres;
+GRANT INSERT ON purchases TO postgres;
+GRANT UPDATE ON purchases TO postgres;
+GRANT DELETE ON purchases TO postgres;
+REVOKE ALL ON purchases FROM postgres;
+GRANT SELECT ON receipts TO postgres;
+GRANT INSERT ON receipts TO postgres;
+GRANT UPDATE ON receipts TO postgres;
+GRANT DELETE ON receipts TO postgres;
+
 -- DATABASE SETUP
 -- DROP TABLES
 DROP TABLE IF EXISTS users CASCADE;
