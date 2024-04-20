@@ -1,0 +1,21 @@
+### TODO/Priority
+
+- Change root password
+- Change blueteam password
+- Add updated passwords to the one place we discussed 
+- Remove all non essential users
+    - Do NOT remove blackteam users
+- Hunt malicious SSH keys
+- Determine if firewall is pinned
+	- Unpin the package 
+- Connect to network
+- Update system
+- Download firewall
+- Disconnect network
+- Harden system
+- Reconnect network
+- Configure SSH
+	- Allow password auth temporarily
+	- Run SSH Key add scripts
+	- Disable password auth
+- Continue to setup your system
